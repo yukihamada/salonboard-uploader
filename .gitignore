@@ -1,0 +1,36 @@
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# ログ・キャッシュ
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 依存関係
+node_modules/
+.npm
+.yarn
+
+# テスト・デバッグ
+coverage/
+*.png
+*.jpg
+*.jpeg
+!images/sample-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ビルド
+dist/
+build/

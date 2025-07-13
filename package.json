@@ -1,0 +1,22 @@
+{
+  "name": "salonboard-uploader",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SalonBoard自動画像アップロードツール",
+  "main": "sb_upload.js",
+  "scripts": {
+    "start": "node sb_upload.js",
+    "test": "node test_upload.js",
+    "debug": "DEBUG=true node sb_upload.js"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.41.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
