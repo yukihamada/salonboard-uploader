@@ -79,24 +79,17 @@ class SalonBoardUploader {
     });
 
     // ログインフォーム入力
-    await this.page.fill('input[type="text"]', CONFIG.SB_ID);
-    await this.page.fill('input[type="password"]', CONFIG.SB_PASS);
+    await this.page.fill('input[name="userId"]', CONFIG.SB_ID);
+    await this.page.fill('input[name="password"]', CONFIG.SB_PASS);
 
     // ログインボタンクリックと遷移待機
-    const buttons = await this.page.$$('button');
-    for (const button of buttons) {
-      const text = await button.textContent();
-      if (text && text.includes('ログイン')) {
-        await Promise.all([
-          this.page.waitForNavigation({ 
-            waitUntil: 'domcontentloaded',
-            timeout: CONFIG.TIMEOUT.DEFAULT 
-          }),
-          button.click()
-        ]);
-        break;
-      }
-    }
+    await Promise.all([
+      this.page.waitForNavigation({ 
+        waitUntil: 'domcontentloaded',
+        timeout: CONFIG.TIMEOUT.DEFAULT 
+      }),
+      this.page.click('a:has-text("ログイン"):visible')
+    ]);
 
     // ログイン成功確認
     const currentUrl = this.page.url();

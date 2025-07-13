@@ -6,7 +6,7 @@ Playwrightを使用してSalonBoardへの画像アップロードを自動化す
 
 1. [機能](#機能)
 2. [必要な環境](#必要な環境)
-3. [セットアップ](#セットアップ)
+3. [ワンコマンドセットアップ](#ワンコマンドセットアップ)
 4. [使い方](#使い方)
 5. [トラブルシューティング](#トラブルシューティング)
 6. [プロジェクト構成](#プロジェクト構成)
@@ -28,35 +28,84 @@ Playwrightを使用してSalonBoardへの画像アップロードを自動化す
 - npm または yarn
 - SalonBoardのアカウント情報（ID/パスワード）
 
-## セットアップ
+## ワンコマンドセットアップ
 
-### 1. リポジトリのクローン
+### 🎯 Mac/Linux用（クリーンインストール）
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/yukihamada/salonboard-uploader/master/setup.sh | bash
+```
+
+### 🎯 Windows用（PowerShellで実行）
+
+```powershell
+irm https://raw.githubusercontent.com/yukihamada/salonboard-uploader/master/setup.ps1 | iex
+```
+
+### 🎯 手動セットアップ（全OS共通）
+
+```bash
+# 1. リポジトリクローン
 git clone https://github.com/yukihamada/salonboard-uploader.git
 cd salonboard-uploader
-```
 
-### 2. 依存関係のインストール
-
-```bash
+# 2. 依存関係インストール
 npm install
-```
 
-### 3. Playwrightブラウザのインストール
-
-```bash
+# 3. Playwrightブラウザインストール
 npx playwright install chromium
+
+# 4. 環境変数設定
+cp .env.example .env.local
+
+# 5. .env.localを編集して認証情報を設定
+# Mac/Linux
+nano .env.local
+# Windows
+notepad .env.local
+
+# 6. サンプル画像生成
+node create_real_images.js
+
+# 7. 実行
+npm start
 ```
 
-### 4. 環境変数の設定
+## セットアップスクリプトの内容
 
-`.env.local` ファイルを作成し、認証情報を設定：
-
+### setup.sh（Mac/Linux用）
 ```bash
-# .env.local
-SB_ID=your_salon_board_id
-SB_PASS=your_password
+#!/bin/bash
+# SalonBoard Uploader 自動セットアップスクリプト
+
+echo "🚀 SalonBoard Uploader セットアップを開始します..."
+
+# Node.jsチェック
+if ! command -v node &> /dev/null; then
+    echo "❌ Node.jsがインストールされていません"
+    echo "👉 https://nodejs.org/ からインストールしてください"
+    exit 1
+fi
+
+# リポジトリクローン
+echo "📦 リポジトリをクローン中..."
+git clone https://github.com/yukihamada/salonboard-uploader.git
+cd salonboard-uploader
+
+# 依存関係インストール
+echo "📚 依存関係をインストール中..."
+npm install
+
+# Playwrightセットアップ
+echo "🎭 Playwrightブラウザをインストール中..."
+npx playwright install chromium
+
+# 環境変数ファイル作成
+echo "🔧 環境変数ファイルを作成中..."
+cat > .env.local << EOF
+# SalonBoard認証情報
+SB_ID=your_id_here
+SB_PASS=your_password_here
 
 # 画像パス（オプション）
 IMG_FRONT=./images/front.jpg
@@ -65,21 +114,91 @@ IMG_BACK=./images/back.jpg
 
 # デバッグモード
 DEBUG=false
-```
+EOF
 
-### 5. 画像の準備
-
-```bash
-# 画像フォルダにアップロードする画像を配置
-cp /path/to/your/front.jpg ./images/
-cp /path/to/your/side.jpg ./images/
-cp /path/to/your/back.jpg ./images/
-```
-
-または、サンプル画像を自動生成：
-
-```bash
+# サンプル画像生成
+echo "🎨 サンプル画像を生成中..."
 node create_real_images.js
+
+echo "✅ セットアップ完了！"
+echo ""
+echo "📝 次のステップ:"
+echo "1. .env.local を編集して認証情報を設定"
+echo "   nano .env.local"
+echo ""
+echo "2. 実行"
+echo "   npm start"
+echo ""
+echo "詳細は README.md を参照してください"
+```
+
+### setup.ps1（Windows用）
+```powershell
+# SalonBoard Uploader 自動セットアップスクリプト（Windows）
+
+Write-Host "🚀 SalonBoard Uploader セットアップを開始します..." -ForegroundColor Green
+
+# Node.jsチェック
+try {
+    node --version | Out-Null
+} catch {
+    Write-Host "❌ Node.jsがインストールされていません" -ForegroundColor Red
+    Write-Host "👉 https://nodejs.org/ からインストールしてください" -ForegroundColor Yellow
+    exit 1
+}
+
+# Git チェック
+try {
+    git --version | Out-Null
+} catch {
+    Write-Host "❌ Gitがインストールされていません" -ForegroundColor Red
+    Write-Host "👉 https://git-scm.com/ からインストールしてください" -ForegroundColor Yellow
+    exit 1
+}
+
+# リポジトリクローン
+Write-Host "📦 リポジトリをクローン中..." -ForegroundColor Yellow
+git clone https://github.com/yukihamada/salonboard-uploader.git
+Set-Location salonboard-uploader
+
+# 依存関係インストール
+Write-Host "📚 依存関係をインストール中..." -ForegroundColor Yellow
+npm install
+
+# Playwrightセットアップ
+Write-Host "🎭 Playwrightブラウザをインストール中..." -ForegroundColor Yellow
+npx playwright install chromium
+
+# 環境変数ファイル作成
+Write-Host "🔧 環境変数ファイルを作成中..." -ForegroundColor Yellow
+@"
+# SalonBoard認証情報
+SB_ID=your_id_here
+SB_PASS=your_password_here
+
+# 画像パス（オプション）
+IMG_FRONT=./images/front.jpg
+IMG_SIDE=./images/side.jpg
+IMG_BACK=./images/back.jpg
+
+# デバッグモード
+DEBUG=false
+"@ | Out-File -FilePath .env.local -Encoding UTF8
+
+# サンプル画像生成
+Write-Host "🎨 サンプル画像を生成中..." -ForegroundColor Yellow
+node create_real_images.js
+
+Write-Host "✅ セットアップ完了！" -ForegroundColor Green
+Write-Host ""
+Write-Host "📝 次のステップ:" -ForegroundColor Cyan
+Write-Host "1. .env.local を編集して認証情報を設定" -ForegroundColor White
+Write-Host "   notepad .env.local" -ForegroundColor Gray
+Write-Host ""
+Write-Host "2. 実行" -ForegroundColor White
+Write-Host "   npm start" -ForegroundColor Gray
+Write-Host ""
+Write-Host "詳細は README.md を参照してください" -ForegroundColor White
 ```
 
 ## 使い方
@@ -147,7 +266,8 @@ node upload_with_images.js
 4. **認証情報の誤り**
    ```bash
    # .env.localを確認
-   cat .env.local
+   cat .env.local  # Mac/Linux
+   type .env.local # Windows
    
    # 手動でログインテスト
    DEBUG=true npm test
@@ -184,8 +304,13 @@ node upload_with_images.js
 
 2. スクリーンショットを確認
    ```bash
+   # Mac/Linux
    ls -la *.png
    open error-*.png  # macOS
+   
+   # Windows
+   dir *.png
+   start error-*.png
    ```
 
 3. セレクタを調整（開発者ツールで確認）
@@ -196,13 +321,21 @@ node upload_with_images.js
 
 1. 画像ファイルを確認
    ```bash
+   # Mac/Linux
    ls -la images/
    file images/*.jpg
+   
+   # Windows
+   dir images\
    ```
 
 2. 画像サイズを確認（推奨: 5MB以下）
    ```bash
+   # Mac/Linux
    du -h images/*.jpg
+   
+   # Windows
+   dir images\*.jpg
    ```
 
 3. 画像形式を確認（JPEG推奨）
@@ -214,8 +347,12 @@ salonboard-uploader/
 ├── sb_upload.js           # メインスクリプト（完全版）
 ├── sb_upload_simple.js    # シンプル版（安定動作優先）
 ├── upload_with_images.js  # 画像アップロード特化版
+├── login_correct.js       # ログイン修正版
 ├── test_upload.js         # テストスクリプト
 ├── create_real_images.js  # サンプル画像生成
+├── setup.sh              # Mac/Linux用セットアップ
+├── setup.ps1             # Windows用セットアップ
+├── .env.example          # 環境変数テンプレート
 ├── .env.local            # 環境変数（Git管理外）
 ├── .gitignore            # Git除外設定
 ├── package.json          # プロジェクト設定
@@ -259,7 +396,7 @@ SalonBoardのUIが変更された場合、セレクタを更新：
 ```javascript
 // sb_upload.js
 // ログインボタンのセレクタを変更
-const buttons = await this.page.$$('新しいセレクタ');
+await this.page.click('新しいセレクタ');
 ```
 
 #### 2. 追加フィールドの入力
