@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.41.0",
+    "canvas": "^3.1.2",
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
